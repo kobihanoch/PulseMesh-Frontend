@@ -16,7 +16,12 @@ export function SimulatorPanel() {
         זהו סימולטור לימודי בלבד. במקרה חירום אמיתי יש להתקשר למד״א במספר 101.
       </div>
 
-      <SimulatorMap location={simulator.location} radius={simulator.radius} onLocationChange={simulator.setLocation} />
+      <SimulatorMap
+        location={simulator.location}
+        radius={simulator.radius}
+        candidates={simulator.incident?.candidates ?? []}
+        onLocationChange={simulator.setLocation}
+      />
 
       <div className="grid gap-5 rounded-2xl bg-white p-6 shadow-sm sm:grid-cols-[1fr_auto]">
         <label className="grid gap-2 font-medium">
