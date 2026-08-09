@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Circle, CircleMarker, MapContainer, Popup, TileLayer, useMap, useMapEvents } from 'react-leaflet';
-import type { Coordinates, IncidentCandidate } from '../types/simulator.types';
+import { Circle, CircleMarker, MapContainer, Polyline, Popup, TileLayer, useMap, useMapEvents } from 'react-leaflet';
+import type { Coordinates, CyclingRoute, IncidentCandidate } from '../types/simulator.types';
 
 const ISRAEL_CENTER: [number, number] = [31.7683, 35.2137];
 
@@ -10,6 +10,7 @@ type SimulatorMapProps = {
   location: Coordinates | null;
   radius: number;
   candidates: IncidentCandidate[];
+  route: CyclingRoute | null;
   onLocationChange: (location: Coordinates) => void;
 };
 
@@ -30,7 +31,7 @@ function MapInteraction({ location, radius, onLocationChange }: Pick<SimulatorMa
   return null;
 }
 
-export default function SimulatorMap({ location, radius, candidates, onLocationChange }: SimulatorMapProps) {
+export default function SimulatorMap({ location, radius, candidates, route, onLocationChange }: SimulatorMapProps) {
   const point: [number, number] | null = location ? [location.latitude, location.longitude] : null;
 
   return (
@@ -68,6 +69,7 @@ export default function SimulatorMap({ location, radius, candidates, onLocationC
           </Popup>
         </CircleMarker>
       ))}
+      {route && <Polyline positions={route.coordinates} pathOptions={{ color: '#16a34a', weight: 5 }} />}
     </MapContainer>
   );
 }

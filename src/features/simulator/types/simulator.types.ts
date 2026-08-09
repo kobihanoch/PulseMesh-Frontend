@@ -25,3 +25,15 @@ export type Incident = Coordinates & {
   createdAt: string;
   candidates: IncidentCandidate[];
 };
+
+export type CyclingRoute = {
+  coordinates: [number, number][];
+  distanceMeters: number;
+  durationSeconds: number;
+  steps: Array<{
+    instruction: string;
+    name: string;
+    distance: number;
+    duration: number;
+  }>;
+};

@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react';
 import { showErrorToast, showSuccessToast } from '@/shared/lib/utils/toast';
 import { validateData } from '@/shared/lib/utils/validate-data';
 import { createIncident } from '../api/create-incident';
+import { getCyclingRoute } from '../api/get-cycling-route';
 import { respondToCandidate, type CandidateResponse } from '../api/respond-to-candidate';
 import { incidentSchema } from '../schemas/incident.schema';
-import type { Coordinates, Incident } from '../types/simulator.types';
+import type { Coordinates, CyclingRoute, Incident } from '../types/simulator.types';
 
 const ISRAEL_CENTER = { latitude: 31.7683, longitude: 35.2137 };
 
@@ -16,6 +17,7 @@ export function useSimulatorLocation() {
   const [incident, setIncident] = useState<Incident | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [respondingCandidateId, setRespondingCandidateId] = useState<string | null>(null);
+  const [route, setRoute] = useState<CyclingRoute | null>(null);
 
   function findCurrentLocation() {
     if (!navigator.geolocation) {
@@ -55,6 +57,7 @@ export function useSimulatorLocation() {
 
     try {
       setSubmitting(true);
+      setRoute(null);
       setIncident(await createIncident(payload));
       showSuccessToast('הסימולציה הופעלה');
     } catch (error) {
@@ -77,6 +80,15 @@ export function useSimulatorLocation() {
           ? { ...current, candidates: current.candidates.map((candidate) => (candidate.candidateId === candidateId ? updatedCandidate : candidate)) }
           : null,
       );
+
+      if (status === 'accepted') {
+        try {
+          setRoute(await getCyclingRoute(updatedCandidate, location));
+        } catch (routeError) {
+          showErrorToast('המועמד אישר, אך לא ניתן לחשב מסלול אופניים', routeError);
+        }
+      }
+
       showSuccessToast(status === 'accepted' ? 'המועמד אישר הגעה בסימולציה' : 'המועמד דחה את הקריאה בסימולציה');
     } catch (error) {
       // The Axios interceptor shows the error toast.
@@ -92,6 +104,7 @@ export function useSimulatorLocation() {
     radius,
     setRadius,
     incident,
+    route,
     submitting,
     respondingCandidateId,
     findCurrentLocation,

@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import { useSimulatorLocation } from '../hooks/use-simulator-location';
 import { CandidateList } from './candidate-list';
+import { RouteInstructions } from './route-instructions';
 
 // Leaflet needs the browser, so it is loaded without server rendering.
 const SimulatorMap = dynamic(() => import('./simulator-map'), { ssr: false });
@@ -20,8 +21,11 @@ export function SimulatorPanel() {
         location={simulator.location}
         radius={simulator.radius}
         candidates={simulator.incident?.candidates ?? []}
+        route={simulator.route}
         onLocationChange={simulator.setLocation}
       />
+
+      {simulator.route && <RouteInstructions route={simulator.route} />}
 
       <div className="grid gap-5 rounded-2xl bg-white p-6 shadow-sm sm:grid-cols-[1fr_auto]">
         <label className="grid gap-2 font-medium">
@@ -62,6 +66,8 @@ export function SimulatorPanel() {
           onResponse={simulator.simulateCandidateResponse}
         />
       )}
+
+      <p className="text-center text-xs text-slate-500">© openrouteservice.org by HeiGIT | Map data © OpenStreetMap contributors</p>
     </section>
   );
 }
