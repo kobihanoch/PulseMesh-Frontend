@@ -1,6 +1,6 @@
 import type { AxiosError, AxiosInstance } from 'axios';
 import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 
 export function initializeServerInterceptors(api: AxiosInstance) {
   api.interceptors.request.use(async (request) => {
@@ -10,7 +10,7 @@ export function initializeServerInterceptors(api: AxiosInstance) {
 
   api.interceptors.response.use(
     (response) => response,
-    (error: AxiosError<{ message?: string }>) => {
+    async (error: AxiosError<{ message?: string }>) => {
       const request = error.config;
       const isExpiredSession = error.response?.status === 401;
       const wasAlreadyRetried = request?._retry;
@@ -18,7 +18,8 @@ export function initializeServerInterceptors(api: AxiosInstance) {
 
       // A login 401 means incorrect credentials, not an expired session.
       if (isExpiredSession && request && !wasAlreadyRetried && !isAuthRequest) {
-        redirect('/api/auth/refresh?next=/admin');
+        const currentPath = (await headers()).get('x-current-path') ?? '/admin';
+        redirect(`/api/auth/refresh?next=${encodeURIComponent(currentPath)}`);
       }
 
       console.log(error);

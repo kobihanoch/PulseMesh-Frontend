@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { getMe } from '../server/get-me';
 import LogoutButton from './logout-button';
