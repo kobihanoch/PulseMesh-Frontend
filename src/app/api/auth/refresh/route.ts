@@ -6,6 +6,7 @@ async function refreshTokens() {
   return serverApi.post('/auth/refresh');
 }
 
+// Client refresh
 export async function POST() {
   try {
     const refreshResponse = await refreshTokens();
@@ -18,10 +19,17 @@ export async function POST() {
     return response;
   } catch (error) {
     const status = axios.isAxiosError(error) ? (error.response?.status ?? 500) : 500;
-    return NextResponse.json({ message: 'Session refresh failed' }, { status });
+
+    const response = NextResponse.json({ message: 'Session refresh failed' }, { status });
+
+    response.cookies.delete('accessToken');
+    response.cookies.delete('refreshToken');
+
+    return response;
   }
 }
 
+// SSR refresh
 export async function GET(request: NextRequest) {
   const requestedNext = request.nextUrl.searchParams.get('next');
   const nextPath = requestedNext?.startsWith('/admin') && !requestedNext.startsWith('//') ? requestedNext : '/admin';
@@ -36,7 +44,11 @@ export async function GET(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error('SSR session refresh failed', error);
-    return NextResponse.redirect(new URL('/admin/login', request.url));
+    const response = NextResponse.redirect(new URL('/admin/login', request.url));
+
+    response.cookies.delete('accessToken');
+    response.cookies.delete('refreshToken');
+
+    return response;
   }
 }
