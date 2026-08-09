@@ -1,15 +1,12 @@
 import axios from 'axios';
 import { API_BASE_URL } from '../api-url.config';
-import { initializeInterceptors } from './api.interceptor';
 
-// One shared client keeps the base URL, timeout, cookies, and error behavior
-// consistent across every vertical slice.
+// This is the common API definition. Next.js evaluates it independently in the
+// browser and server runtimes, while both environments keep identical defaults.
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 12_000,
   withCredentials: true,
 });
-
-initializeInterceptors(api);
 
 export default api;

@@ -1,4 +1,4 @@
-import api from '@/shared/lib/api/api-config/api';
+import api from '@/shared/lib/api/api-config/client-api/client-api';
 import type { IncidentRequest } from '../schemas/incident.schema';
 import type { Incident } from '../types/simulator.types';
 

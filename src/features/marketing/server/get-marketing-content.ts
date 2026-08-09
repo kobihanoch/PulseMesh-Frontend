@@ -1,4 +1,4 @@
-import api from '@/shared/lib/api/api-config/api';
+import api from '@/shared/lib/api/api-config/server-api/server-api';
 import type { MarketingContent, MarketingSection } from '../types/marketing.types';
 
 export async function getMarketingContent() {
