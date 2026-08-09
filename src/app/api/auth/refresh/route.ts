@@ -25,7 +25,7 @@ export async function POST() {
     response.cookies.delete('accessToken');
     response.cookies.delete('refreshToken');
 
-    return response;
+    return preventCaching(response);
   }
 }
 
@@ -43,12 +43,18 @@ export async function GET(request: NextRequest) {
     }
 
     return response;
-  } catch (error) {
+  } catch {
     const response = NextResponse.redirect(new URL('/admin/login', request.url));
 
     response.cookies.delete('accessToken');
     response.cookies.delete('refreshToken');
 
-    return response;
+    return preventCaching(response);
   }
+}
+
+function preventCaching(response: NextResponse) {
+  response.headers.set('Cache-Control', 'private, no-store, no-cache, must-revalidate');
+
+  return response;
 }

@@ -15,10 +15,6 @@ const links = [
 export default async function AdminShell({ children }: { children: ReactNode }) {
   const user = await getMe();
 
-  if (!user) {
-    redirect('/admin/login');
-  }
-
   return (
     <div className="min-h-screen bg-slate-100 md:grid md:grid-cols-[240px_1fr]">
       <aside className="bg-slate-950 p-6 text-white">
