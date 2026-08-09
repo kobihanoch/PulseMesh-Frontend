@@ -16,17 +16,11 @@ export function useLogin() {
     const credentials = validateData(loginSchema, Object.fromEntries(new FormData(event.currentTarget)));
     if (!credentials) return;
 
-    try {
-      setSubmitting(true);
-      await login(credentials);
-      router.push('/admin');
-      router.refresh();
-    } catch (error) {
-      // The Axios interceptor logs and displays the API error.
-      console.error('Login failed:', error);
-    } finally {
-      setSubmitting(false);
-    }
+    setSubmitting(true);
+    await login(credentials).finally(() => setSubmitting(false));
+
+    router.push('/admin');
+    router.refresh();
   }
 
   return { submitting, submitLogin };
