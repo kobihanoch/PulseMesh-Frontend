@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { useSimulatorLocation } from '../hooks/use-simulator-location';
+import { CandidateList } from './candidate-list';
 
 // Leaflet needs the browser, so it is loaded without server rendering.
 const SimulatorMap = dynamic(() => import('./simulator-map'), { ssr: false });
@@ -39,6 +40,17 @@ export function SimulatorPanel() {
           ? `מיקום שנבחר: ${simulator.location.latitude.toFixed(5)}, ${simulator.location.longitude.toFixed(5)}`
           : 'לחצו על המפה כדי לבחור את מיקום האירוע.'}
       </p>
+
+      <button
+        className="w-full rounded-xl bg-red-600 px-6 py-4 text-lg font-bold text-white hover:bg-red-500 disabled:opacity-50"
+        type="button"
+        disabled={simulator.submitting}
+        onClick={simulator.runSimulation}
+      >
+        {simulator.submitting ? 'מפעיל סימולציה...' : 'הפעלת סימולציה'}
+      </button>
+
+      {simulator.incident && <CandidateList candidates={simulator.incident.candidates} />}
     </section>
   );
 }

@@ -2,13 +2,18 @@
 
 import { useEffect, useState } from 'react';
 import { showErrorToast, showSuccessToast } from '@/shared/lib/utils/toast';
-import type { Coordinates } from '../types/simulator.types';
+import { validateData } from '@/shared/lib/utils/validate-data';
+import { createIncident } from '../api/create-incident';
+import { incidentSchema } from '../schemas/incident.schema';
+import type { Coordinates, Incident } from '../types/simulator.types';
 
 const ISRAEL_CENTER = { latitude: 31.7683, longitude: 35.2137 };
 
 export function useSimulatorLocation() {
   const [location, setLocation] = useState<Coordinates>(ISRAEL_CENTER);
   const [radius, setRadius] = useState(5_000);
+  const [incident, setIncident] = useState<Incident | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   function findCurrentLocation() {
     if (!navigator.geolocation) {
@@ -38,5 +43,25 @@ export function useSimulatorLocation() {
     );
   }, []);
 
-  return { location, setLocation, radius, setRadius, findCurrentLocation };
+  async function runSimulation() {
+    const payload = validateData(incidentSchema, {
+      ...location,
+      radiusMeters: radius,
+      source: 'simulator',
+    });
+    if (!payload) return;
+
+    try {
+      setSubmitting(true);
+      setIncident(await createIncident(payload));
+      showSuccessToast('הסימולציה הופעלה');
+    } catch (error) {
+      // The Axios interceptor shows the error toast.
+      console.error('Simulation failed:', error);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return { location, setLocation, radius, setRadius, incident, submitting, findCurrentLocation, runSimulation };
 }
