@@ -51,11 +51,16 @@ export default function SimulatorMap({ location, radius, candidates, onLocationC
           key={candidate.candidateId}
           center={[candidate.latitude, candidate.longitude]}
           radius={7}
-          pathOptions={{ color: '#1d4ed8', fillColor: '#3b82f6', fillOpacity: 1 }}
+          pathOptions={{
+            color: candidate.status === 'accepted' ? '#15803d' : candidate.status === 'declined' ? '#64748b' : '#1d4ed8',
+            fillColor: candidate.status === 'accepted' ? '#22c55e' : candidate.status === 'declined' ? '#94a3b8' : '#3b82f6',
+            fillOpacity: 1,
+          }}
         >
           <Popup>
             <div dir="rtl" className="space-y-1 text-right">
               <strong>דפיברילטור מועמד</strong>
+              <p>סטטוס: {candidate.status === 'accepted' ? 'אישר הגעה' : candidate.status === 'declined' ? 'דחה' : 'נשלחה התראה'}</p>
               <p>מרחק: {candidate.distanceMeters.toLocaleString('he-IL')} מטר</p>
               <p>סוללה: {candidate.batteryPercentage === null ? 'לא ידוע' : `${candidate.batteryPercentage}%`}</p>
               <p>שידור אחרון: {new Date(candidate.lastTransmissionAt).toLocaleString('he-IL')}</p>

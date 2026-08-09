@@ -55,7 +55,13 @@ export function SimulatorPanel() {
         {simulator.submitting ? 'מפעיל סימולציה...' : 'הפעלת סימולציה'}
       </button>
 
-      {simulator.incident && <CandidateList candidates={simulator.incident.candidates} />}
+      {simulator.incident && (
+        <CandidateList
+          candidates={simulator.incident.candidates}
+          respondingCandidateId={simulator.respondingCandidateId}
+          onResponse={simulator.simulateCandidateResponse}
+        />
+      )}
     </section>
   );
 }

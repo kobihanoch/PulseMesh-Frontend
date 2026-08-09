@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { showErrorToast, showSuccessToast } from '@/shared/lib/utils/toast';
 import { validateData } from '@/shared/lib/utils/validate-data';
 import { createIncident } from '../api/create-incident';
+import { respondToCandidate, type CandidateResponse } from '../api/respond-to-candidate';
 import { incidentSchema } from '../schemas/incident.schema';
 import type { Coordinates, Incident } from '../types/simulator.types';
 
@@ -14,6 +15,7 @@ export function useSimulatorLocation() {
   const [radius, setRadius] = useState(5_000);
   const [incident, setIncident] = useState<Incident | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [respondingCandidateId, setRespondingCandidateId] = useState<string | null>(null);
 
   function findCurrentLocation() {
     if (!navigator.geolocation) {
@@ -63,5 +65,37 @@ export function useSimulatorLocation() {
     }
   }
 
-  return { location, setLocation, radius, setRadius, incident, submitting, findCurrentLocation, runSimulation };
+  async function simulateCandidateResponse(candidateId: string, status: CandidateResponse) {
+    if (!incident) return;
+
+    try {
+      setRespondingCandidateId(candidateId);
+      const updatedCandidate = await respondToCandidate(incident.id, candidateId, status);
+
+      setIncident((current) =>
+        current
+          ? { ...current, candidates: current.candidates.map((candidate) => (candidate.candidateId === candidateId ? updatedCandidate : candidate)) }
+          : null,
+      );
+      showSuccessToast(status === 'accepted' ? 'המועמד אישר הגעה בסימולציה' : 'המועמד דחה את הקריאה בסימולציה');
+    } catch (error) {
+      // The Axios interceptor shows the error toast.
+      console.error('Candidate response failed:', error);
+    } finally {
+      setRespondingCandidateId(null);
+    }
+  }
+
+  return {
+    location,
+    setLocation,
+    radius,
+    setRadius,
+    incident,
+    submitting,
+    respondingCandidateId,
+    findCurrentLocation,
+    runSimulation,
+    simulateCandidateResponse,
+  };
 }
