@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import { ErrorToaster } from '@/shared/components/feedback/error-toaster';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -14,7 +15,10 @@ type RootLayoutProps = Readonly<{
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="he" dir="rtl">
-      <body>{children}</body>
+      <body>
+        {children}
+        <ErrorToaster />
+      </body>
     </html>
   );
 }

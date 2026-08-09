@@ -1,5 +1,10 @@
 import type { AxiosError, AxiosInstance } from 'axios';
+import { showErrorToast } from '@/shared/lib/utils/toast';
 import { refreshSessionAndRetry } from './helpers/error-handlers';
+
+function getErrorMessage(error: AxiosError<{ message?: string }>) {
+  return error.response?.data.message || (error.response ? 'הבקשה נכשלה' : 'לא ניתן להתחבר לשרת');
+}
 
 export const initializeInterceptors = (api: AxiosInstance) => {
   // Flow after an expired access token:
@@ -14,9 +19,16 @@ export const initializeInterceptors = (api: AxiosInstance) => {
 
       // A login 401 means incorrect credentials, not an expired session.
       if (isExpiredSession && request && !wasAlreadyRetried && !isLoginRequest) {
-        return refreshSessionAndRetry(api, request);
+        try {
+          return await refreshSessionAndRetry(api, request);
+        } catch (refreshError) {
+          showErrorToast('החיבור פג. יש להתחבר מחדש.', refreshError);
+          return Promise.reject(error);
+        }
       }
 
+      showErrorToast(getErrorMessage(error), error);
+      console.log(error);
       return Promise.reject(error);
     },
   );
