@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { ErrorToaster } from '@/shared/components/feedback/error-toaster';
+import 'leaflet/dist/leaflet.css';
 import './globals.css';
 
 export const metadata: Metadata = {
