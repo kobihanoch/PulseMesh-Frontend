@@ -2,6 +2,7 @@
 
 import { useRegistrationForm } from '../hooks/use-registration-form';
 import { equipmentTypes } from '../schemas/registration.schema';
+import { RegistrationSuccess } from './registration-success';
 
 const equipmentLabels = {
   defibrillator_only: 'דפיברילטור נייד ללא LoRa',
@@ -11,6 +12,10 @@ const equipmentLabels = {
 
 export function RegistrationForm() {
   const form = useRegistrationForm();
+
+  if (form.registration) {
+    return <RegistrationSuccess {...form.registration} />;
+  }
 
   return (
     <form className="space-y-6 rounded-2xl bg-white p-6 shadow-sm sm:p-8" onSubmit={form.submitRegistration}>
@@ -54,8 +59,6 @@ export function RegistrationForm() {
           {form.location ? 'המיקום נוסף ✓' : 'הוספת מיקום נוכחי (רשות)'}
         </button>
       </div>
-
-      {form.registrationId && <p className="rounded-lg bg-green-50 p-4 text-green-900" role="status">מספר הרישום שלך: {form.registrationId}</p>}
 
       <button className="w-full rounded-xl bg-red-600 px-6 py-3 font-bold text-white hover:bg-red-500 disabled:opacity-50" type="submit" disabled={form.submitting}>
         {form.submitting ? 'שולח...' : 'שליחת הרשמה'}

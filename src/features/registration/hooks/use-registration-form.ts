@@ -32,7 +32,7 @@ function getPayload(form: RegistrationFormData, location: Location | null): Regi
 export function useRegistrationForm() {
   const [equipmentType, setEquipmentType] = useState<RegistrationFormData['equipmentType']>('defibrillator_only');
   const [location, setLocation] = useState<Location | null>(null);
-  const [registrationId, setRegistrationId] = useState('');
+  const [registration, setRegistration] = useState<{ id: string; equipmentType: RegistrationFormData['equipmentType'] } | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   function requestLocation() {
@@ -52,7 +52,6 @@ export function useRegistrationForm() {
 
   async function submitRegistration(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setRegistrationId('');
 
     // Text inputs keep their own values. Read them all when the form is submitted.
     const formElement = event.currentTarget;
@@ -62,13 +61,10 @@ export function useRegistrationForm() {
 
     try {
       setSubmitting(true);
-      const registration = await createRegistration(getPayload(validData, location));
+      const response = await createRegistration(getPayload(validData, location));
 
-      setRegistrationId(registration.id);
+      setRegistration({ id: response.id, equipmentType: validData.equipmentType });
       showSuccessToast('נרשמת בהצלחה');
-      formElement.reset();
-      setEquipmentType('defibrillator_only');
-      setLocation(null);
     } catch (error) {
       // The shared Axios interceptor displays API errors in the global toast.
       console.error('Registration failed:', error);
@@ -77,5 +73,5 @@ export function useRegistrationForm() {
     }
   }
 
-  return { equipmentType, setEquipmentType, location, registrationId, submitting, requestLocation, submitRegistration };
+  return { equipmentType, setEquipmentType, location, registration, submitting, requestLocation, submitRegistration };
 }
