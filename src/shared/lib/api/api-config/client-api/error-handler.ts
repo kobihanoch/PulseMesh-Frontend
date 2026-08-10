@@ -10,7 +10,7 @@ export const refreshSessionAndRetry = async (api: AxiosInstance, request: Intern
   // Express reads and rotates the HTTP-only refresh cookie.
   if (!refreshRequest) {
     refreshRequest = axios
-      .post(`${API_BASE_URL}/auth/refresh`, undefined, { withCredentials: true }) // Route Handler refresh!!
+      .post(`${API_BASE_URL}/auth/refresh`, undefined, { withCredentials: true })
       .then(() => undefined)
       .finally(() => {
         refreshRequest = null;
