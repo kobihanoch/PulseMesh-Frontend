@@ -1,4 +1,4 @@
-import AdminShell from '@/features/auth/components/admin-shell';
+import AdminShell from '@/features/admin/components/admin-shell';
 import type { ReactNode } from 'react';
 
 export const dynamic = 'force-dynamic';

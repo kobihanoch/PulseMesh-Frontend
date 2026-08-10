@@ -5,6 +5,7 @@ import { cookies, headers } from 'next/headers';
 export function initializeServerInterceptors(api: AxiosInstance) {
   api.interceptors.request.use(async (request) => {
     request.headers.Cookie = (await cookies()).toString();
+    //console.log(`[SSR Outbound Request] ${request.method?.toUpperCase()} -> ${api.getUri(request)}`);
     return request;
   });
 

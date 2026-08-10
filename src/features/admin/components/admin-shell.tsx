@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { getMe } from '../server/get-me';
-import LogoutButton from './logout-button';
+import { getMe } from '../../auth/server/get-me';
+import LogoutButton from '../../auth/components/logout-button';
 
 const links = [
   ['לוח ניהול', '/admin'],
