@@ -1,4 +1,5 @@
 import axios, { type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
+import { API_BASE_URL } from '../../api-url.config';
 
 let refreshRequest: Promise<void> | null = null;
 
@@ -9,7 +10,7 @@ export const refreshSessionAndRetry = async (api: AxiosInstance, request: Intern
   // Express reads and rotates the HTTP-only refresh cookie.
   if (!refreshRequest) {
     refreshRequest = axios
-      .post(`/api/auth/refresh`, undefined, { withCredentials: true }) // Route Handler refresh!!
+      .post(`${API_BASE_URL}/auth/refresh`, undefined, { withCredentials: true }) // Route Handler refresh!!
       .then(() => undefined)
       .finally(() => {
         refreshRequest = null;
