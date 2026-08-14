@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { deleteCookies, preventCaching, refreshTokensOnce, validateSession } from './shared/lib/proxy/proxy.utils';
+import { deleteCookies, isExpired, preventCaching, refreshTokensOnce, validateSession } from './shared/lib/proxy/proxy.utils';
 
 // Runs only when a request is coming from browser -> Next.js server
 export async function proxy(request: NextRequest) {
@@ -9,6 +9,10 @@ export async function proxy(request: NextRequest) {
   if (request.nextUrl.pathname === '/admin/login') {
     return NextResponse.next();
   }
+
+  // Decoding exp is only an optimization. Express still validates every token that appears current.
+  const accessToken = request.cookies.get('accessToken')?.value;
+  if (!accessToken || isExpired(accessToken)) return refreshTokensOnce(request);
 
   // If any other protected pages
   try {

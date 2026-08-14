@@ -8,6 +8,23 @@ export async function validateSession(request: NextRequest) {
   });
 }
 
+export function isExpired(token: string) {
+  try {
+    const payload = token.split('.')[1];
+    if (!payload) return true;
+
+    const decodedPayload = Buffer.from(payload, 'base64url').toString('utf8');
+    const { exp } = JSON.parse(decodedPayload) as { exp?: number };
+    if (!exp) return true;
+
+    const expirationTime = exp * 1000;
+    const minimumValidTime = Date.now() + 15_000;
+    return expirationTime <= minimumValidTime;
+  } catch {
+    return true;
+  }
+}
+
 // The in memory solution is good only for 1 instance of server, no shared memory. IN the future I will use Redis.
 const activeRefreshes = new Map<string, Promise<AxiosResponse>>();
 export async function refreshTokensOnce(request: NextRequest) {
@@ -22,14 +39,14 @@ export async function refreshTokensOnce(request: NextRequest) {
     refreshPromise = serverApi.post('/auth/refresh', undefined, {
       headers: { Cookie: request.headers.get('cookie') ?? '' },
     });
-    activeRefreshes.set(currentRefreshToken, refreshPromise);
+    activeRefreshes.set(currentRefreshToken, refreshPromise!);
   }
 
   // Execute (wait until refresh ends)
   try {
     // Inject new cookies to SSR request and to final response
     const refreshResponse = await refreshPromise;
-    const setCookies = refreshResponse.headers['set-cookie'] ?? [];
+    const setCookies = refreshResponse!.headers['set-cookie'] ?? [];
     const response = forwardSessionCookies(setCookies, request);
 
     // Grace period of 5 seconds for late concurrent requests
