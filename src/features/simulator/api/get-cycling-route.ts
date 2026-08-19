@@ -1,4 +1,4 @@
-import api from '@/shared/lib/api/api-config/api';
+import api from '@/shared/lib/api/api-config/client-api/client-api';
 import type { Coordinates, CyclingRoute } from '../types/simulator.types';
 
 export async function getCyclingRoute(start: Coordinates, end: Coordinates) {

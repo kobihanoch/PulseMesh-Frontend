@@ -1,4 +1,4 @@
-import api from '@/shared/lib/api/api-config/api';
+import api from '@/shared/lib/api/api-config/client-api/client-api';
 import type { RegistrationPayload, RegistrationResponse } from '../types/registration.types';
 
 export async function createRegistration(payload: RegistrationPayload) {

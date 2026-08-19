@@ -55,44 +55,35 @@ export function useSimulatorLocation() {
     });
     if (!payload) return;
 
-    try {
-      setSubmitting(true);
-      setRoute(null);
-      setIncident(await createIncident(payload));
-      showSuccessToast('הסימולציה הופעלה');
-    } catch (error) {
-      // The Axios interceptor shows the error toast.
-      console.error('Simulation failed:', error);
-    } finally {
-      setSubmitting(false);
-    }
+    setSubmitting(true);
+    setRoute(null);
+    setIncident(await createIncident(payload).finally(() => setSubmitting(false)));
+    showSuccessToast('הסימולציה הופעלה');
   }
 
   async function simulateCandidateResponse(candidateId: string, status: CandidateResponse) {
     if (!incident) return;
 
+    setRespondingCandidateId(candidateId);
+
     try {
-      setRespondingCandidateId(candidateId);
-      const updatedCandidate = await respondToCandidate(incident.id, candidateId, status);
+    const updatedCandidate = await respondToCandidate(incident.id, candidateId, status);
 
-      setIncident((current) =>
-        current
-          ? { ...current, candidates: current.candidates.map((candidate) => (candidate.candidateId === candidateId ? updatedCandidate : candidate)) }
-          : null,
-      );
+    // Update incident state with candidate's new status
+    setIncident((current) =>
+      current
+        ? { ...current, candidates: current.candidates.map((candidate) => (candidate.candidateId === candidateId ? updatedCandidate : candidate)) }
+        : null,
+    );
 
-      if (status === 'accepted') {
-        try {
-          setRoute(await getCyclingRoute(updatedCandidate, location));
-        } catch (routeError) {
-          showErrorToast('המועמד אישר, אך לא ניתן לחשב מסלול אופניים', routeError);
-        }
-      }
-
-      showSuccessToast(status === 'accepted' ? 'המועמד אישר הגעה בסימולציה' : 'המועמד דחה את הקריאה בסימולציה');
-    } catch (error) {
-      // The Axios interceptor shows the error toast.
-      console.error('Candidate response failed:', error);
+    if (status === 'accepted') {
+      showSuccessToast('המועמד אישר הגעה בסימולציה');
+      setRoute(await getCyclingRoute(updatedCandidate, location));
+    } else {
+      showSuccessToast('המועמד דחה את הקריאה בסימולציה');
+    }
+    } catch {
+      setRoute(null);
     } finally {
       setRespondingCandidateId(null);
     }
