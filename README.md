@@ -2,6 +2,7 @@
 
 The PulseMesh frontend is a Hebrew-first Next.js web application for explaining the project, registering mobile defibrillators/LoRa devices, demonstrating an emergency incident, and administering the registry.
 
+- [Live website](https://pulsemesh.kobihanoch.com)
 - [Backend documentation](../Backend/README.md)
 - [Complete project documentation](../README.md)
 
