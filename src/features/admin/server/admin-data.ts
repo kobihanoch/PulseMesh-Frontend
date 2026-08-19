@@ -1,6 +1,6 @@
 import 'server-only';
 import api from '@/shared/lib/api/api-config/server-api/server-api';
-import type { Device, DeviceList, Incident, IncidentList, PaginatedCount, Registration, RegistrationList, TelemetryList } from '../types/admin.types';
+import type { Device, DeviceList, Incident, IncidentList, NotificationList, PaginatedCount, Registration, RegistrationList, TelemetryList } from '../types/admin.types';
 
 export async function getDashboardCounts() {
   const [registrations, devices, incidents] = await Promise.all([
@@ -54,5 +54,10 @@ export async function getIncidents(page: number) {
 
 export async function getIncident(id: string) {
   const { data } = await api.get<Incident>(`/incidents/${id}`);
+  return data;
+}
+
+export async function getNotifications(channel: 'push' | 'lora', page: number) {
+  const { data } = await api.get<NotificationList>('/notifications', { params: { channel, page, limit: 20 } });
   return data;
 }

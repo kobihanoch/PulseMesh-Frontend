@@ -93,3 +93,15 @@ export type TelemetryEntry = {
 };
 
 export type TelemetryList = { items: TelemetryEntry[]; pagination: Pagination };
+
+export type Notification = {
+  type: 'incident' | 'low_battery';
+  channel: 'push' | 'lora';
+  status: 'simulated';
+  registrantId: string;
+  deviceId: string;
+  incidentId?: string;
+  createdAt: string;
+};
+
+export type NotificationList = { items: Notification[]; pagination: Pagination };

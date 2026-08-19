@@ -4,6 +4,8 @@ import { getMe } from '../../auth/server/get-me';
 import LogoutButton from '../../auth/components/logout-button';
 
 const links = [
+  ['התראות', '/admin/notifications'],
+  ['התראות LoRa', '/admin/lora-alerts'],
   ['לוח ניהול', '/admin'],
   ['הרשמות', '/admin/registrations'],
   ['מכשירים', '/admin/devices'],
