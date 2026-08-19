@@ -45,3 +45,51 @@ export type Registration = {
 
 export type RegistrationList = { items: Registration[]; pagination: Pagination };
 export type PaginatedCount = { pagination: Pagination };
+
+export type Device =
+  | (Defibrillator & { deviceType: 'defibrillator' })
+  | (LoraDevice & { deviceType: 'lora' });
+
+export type DeviceList = { items: Device[]; pagination: Pagination };
+
+export type IncidentCandidate = {
+  candidateId: string;
+  defibrillatorId: string;
+  loraDeviceId: string | null;
+  devEui: string | null;
+  batteryPercentage: number | null;
+  latitude: number;
+  longitude: number;
+  lastTransmissionAt: string;
+  distanceMeters: number;
+  status: 'notified' | 'accepted' | 'declined' | 'failed';
+  notifiedAt: string;
+  respondedAt: string | null;
+  notifications: { push: 'simulated'; lora: 'simulated' | 'unavailable' };
+};
+
+export type Incident = {
+  id: string;
+  source: 'app' | 'emergency_center' | 'simulator';
+  latitude: number;
+  longitude: number;
+  radiusMeters: number;
+  status: 'active' | 'resolved' | 'cancelled';
+  description: string | null;
+  createdAt: string;
+  closedAt: string | null;
+  candidates?: IncidentCandidate[];
+};
+
+export type IncidentList = { items: Incident[]; pagination: Pagination };
+
+export type TelemetryEntry = {
+  deviceId: string;
+  devEui: string;
+  batteryPercentage: number;
+  latitude: number;
+  longitude: number;
+  receivedAt: string;
+};
+
+export type TelemetryList = { items: TelemetryEntry[]; pagination: Pagination };
