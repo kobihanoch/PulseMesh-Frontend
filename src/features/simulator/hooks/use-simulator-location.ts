@@ -66,6 +66,7 @@ export function useSimulatorLocation() {
 
     setRespondingCandidateId(candidateId);
 
+    try {
     const updatedCandidate = await respondToCandidate(incident.id, candidateId, status);
 
     // Update incident state with candidate's new status
@@ -81,7 +82,11 @@ export function useSimulatorLocation() {
     } else {
       showSuccessToast('המועמד דחה את הקריאה בסימולציה');
     }
-    setRespondingCandidateId(null);
+    } catch {
+      setRoute(null);
+    } finally {
+      setRespondingCandidateId(null);
+    }
   }
 
   return {
