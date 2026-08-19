@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { DeviceEditor } from '@/features/admin/components/device-editor';
+import { TelemetryForm } from '@/features/admin/components/telemetry-form';
 import { getDevice, getTelemetry } from '@/features/admin/server/admin-data';
 
 type Props = { params: Promise<{ type: string; id: string }>; searchParams: Promise<{ page?: string }> };
@@ -20,6 +21,7 @@ export default async function DevicePage({ params, searchParams }: Props) {
         {device.deviceType === 'lora' && <><div><dt className="text-sm text-slate-500">DevEUI</dt><dd>{device.devEui}</dd></div><div><dt className="text-sm text-slate-500">סוללה</dt><dd>{device.batteryPercentage ?? 'לא ידוע'}{device.batteryPercentage !== null && '%'}</dd></div></>}
       </dl>
       <DeviceEditor device={device} />
+      {device.deviceType === 'lora' && <TelemetryForm device={device} />}
 
       {telemetry && (
         <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">

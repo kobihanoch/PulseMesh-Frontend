@@ -21,3 +21,7 @@ export function deleteDevice(device: Device) {
 export function closeIncident(incidentId: string, status: 'resolved' | 'cancelled') {
   return clientApi.patch(`/incidents/${incidentId}`, { status });
 }
+
+export function postTelemetry(devEui: string, batteryPercentage: number, latitude: number, longitude: number) {
+  return clientApi.post('/telemetry', { devEui, batteryPercentage, latitude, longitude });
+}
