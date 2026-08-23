@@ -1,152 +1,209 @@
 # PulseMesh Frontend
 
-The PulseMesh frontend is a Hebrew-first Next.js web application for explaining the project, registering mobile defibrillators/LoRa devices, demonstrating an emergency incident, and administering the registry.
+PulseMesh is a Hebrew-first web platform demonstrating how mobile defibrillators and hybrid cellular/LoRa communication could shorten emergency response time. This repository contains the public website, registration flow, incident simulator, maps/routing, and protected administration interface.
+
+## Links
 
 - [Live website](https://pulsemesh.kobihanoch.com)
-- [Backend documentation](../Backend/README.md)
-- [Complete project documentation](../README.md)
+- [Live API](https://pulsemesh-api.kobihanoch.com)
+- [Frontend repository](https://github.com/kobihanoch/PulseMesh-Frontend)
+- [Backend repository](https://github.com/kobihanoch/PulseMesh-Backend)
+
+> PulseMesh is an educational prototype. It does not contact MDA, emergency number 101, or any other emergency service.
+
+## Assignment goals implemented
+
+- Explain the medical motivation and hybrid LoRa/cellular concept.
+- Register defibrillator owners and LoRa participants.
+- Demonstrate an emergency incident on an interactive map.
+- Show nearby candidates, simulated alerts, volunteer responses, and bicycle navigation.
+- Provide protected fleet and incident administration.
+- Use a responsive modern web stack, secure API communication, cloud deployment, and project documentation.
 
 ## User flows
 
-### 1. Home and emergency explanation
+### Public home page
 
-The server-rendered home page explains LoRa/Meshtastic, shows parallel LoRa and cellular/SMS emergency channels, presents editable marketing sections, links to LoRa purchasing options, and links to MDA's fixed-defibrillator information.
+The home page introduces PulseMesh, LoRa, and Meshtastic; explains parallel cellular and LoRa alerts; links to registration and the simulator; and provides links to LoRa stores and MDA's fixed-defibrillator information.
 
 | Desktop | Mobile |
 | --- | --- |
 | ![Home desktop](docs/screenshots/home/desktop.png) | ![Home mobile](docs/screenshots/home/mobile.png) |
 
-### 2. Equipment registration
+### Equipment registration
 
-Public registration requires no customer password. It supports a mobile defibrillator without LoRa, a mobile defibrillator with LoRa, or a LoRa-only participant. DevEUI is required only for LoRa equipment.
+Public registration requires no account. A participant can register:
+
+- A mobile defibrillator without LoRa.
+- A mobile defibrillator paired with LoRa.
+- A LoRa-only device that strengthens the network.
+
+The form validates personal details, medical training, equipment details, DevEUI when required, and optional location.
 
 | Desktop | Mobile |
 | --- | --- |
 | ![Registration desktop](docs/screenshots/registration/desktop.png) | ![Registration mobile](docs/screenshots/registration/mobile.png) |
 
-### 3. Incident simulator
+### Incident simulator
 
-The simulator selects an emergency GPS point and radius, displays nearby candidates, simulates Push/LoRa alerts, accepts or declines a response, and displays an OpenRouteService bicycle route. The documented flow below uses the separate demonstration point `31.94000, 34.77500`.
+The simulator lets a user choose an emergency point and radius. It displays eligible nearby candidates, simulates Push/LoRa delivery, records acceptance/rejection, and displays an OpenRouteService bicycle route with distance, duration, and instructions.
 
-![Simulator initial map](docs/screenshots/simulator/desktop.png)
+![Simulator map](docs/screenshots/simulator/desktop.png)
 
-![Simulator candidate results](docs/screenshots/simulator/results.png)
+![Nearby candidates](docs/screenshots/simulator/results.png)
 
-![Simulator accepted candidate and route](docs/screenshots/simulator/accepted-route.png)
+![Accepted candidate and route](docs/screenshots/simulator/accepted-route.png)
 
-Mobile simulator:
+### Administration
 
-![Simulator mobile](docs/screenshots/simulator/mobile.png)
+The protected admin application includes:
 
-### 4. Administration
+- Dashboard totals.
+- Registration editing and deletion.
+- Defibrillator and LoRa device status management.
+- Demonstration telemetry submission and history.
+- Incident details, candidates, resolution, and cancellation.
+- Push/low-battery notification and LoRa alert history.
+- Public marketing-content editing.
 
-Admin pages are protected by access/refresh JWT cookies and include registrations, devices, telemetry, incidents, Push notifications, LoRa alerts, and marketing content.
-
-| Entry | Dashboard |
+| Login | Dashboard |
 | --- | --- |
 | ![Admin login](docs/screenshots/admin/login-desktop.png) | ![Admin dashboard](docs/screenshots/admin/dashboard.png) |
 
 | Registrations | Devices |
 | --- | --- |
-| ![Admin registrations](docs/screenshots/admin/registrations.png) | ![Admin devices](docs/screenshots/admin/devices.png) |
+| ![Registrations](docs/screenshots/admin/registrations.png) | ![Devices](docs/screenshots/admin/devices.png) |
 
-| Incidents | Push notifications |
+| Incidents | Notifications |
 | --- | --- |
-| ![Admin incidents](docs/screenshots/admin/incidents.png) | ![Admin notifications](docs/screenshots/admin/notifications.png) |
+| ![Incidents](docs/screenshots/admin/incidents.png) | ![Notifications](docs/screenshots/admin/notifications.png) |
 
 | LoRa alerts | Marketing content |
 | --- | --- |
-| ![Admin LoRa alerts](docs/screenshots/admin/lora-alerts.png) | ![Admin marketing content](docs/screenshots/admin/marketing-content.png) |
-
-### Admin editing/detail flows
-
-Registration owner editing and equipment details:
-
-![Admin registration editing](docs/screenshots/admin/registration-edit.png)
-
-LoRa status editing, telemetry submission, and telemetry history:
-
-![Admin LoRa editing and telemetry](docs/screenshots/admin/lora-device-edit-telemetry.png)
-
-Incident details, candidates, and resolve/cancel actions:
-
-![Admin incident detail actions](docs/screenshots/admin/incident-detail-actions.png)
-
-Marketing-section editing:
-
-![Admin marketing editing](docs/screenshots/admin/marketing-edit.png)
-
-## Technology
-
-- Next.js 16 App Router
-- React 19
-- TypeScript
-- Tailwind CSS
-- Axios
-- Zod
-- Leaflet and React Leaflet
-- Sonner notifications
-
-## Rendering and API architecture
-
-- Home and admin data pages use Server Components.
-- Forms, maps, simulator actions, and editors use Client Components.
-- Feature `server` modules use the configured server Axios client and forward cookies.
-- Feature `api` modules use the configured browser Axios client.
-- Protected client requests attempt one access-token refresh before redirecting to login.
-- Next.js proxy middleware validates protected admin navigation.
+| ![LoRa alerts](docs/screenshots/admin/lora-alerts.png) | ![Marketing content](docs/screenshots/admin/marketing-content.png) |
 
 ## Routes
 
 | Route | Purpose |
 | --- | --- |
-| `/` | Public marketing and emergency explanation |
-| `/register` | Passwordless equipment registration |
-| `/simulator` | Map-based incident simulator |
-| `/admin/login` | Admin login |
-| `/admin` | Dashboard |
-| `/admin/registrations` | Registration management |
-| `/admin/devices` | Device and telemetry management |
+| `/` | Public explanation and links |
+| `/register` | Public equipment registration |
+| `/simulator` | Interactive incident simulation |
+| `/admin/login` | Administrator login |
+| `/admin` | Dashboard summaries |
+| `/admin/registrations` | Registrant management |
+| `/admin/devices` | Defibrillator and LoRa management |
 | `/admin/incidents` | Incident management |
 | `/admin/notifications` | Push and low-battery history |
-| `/admin/lora-alerts` | LoRa Downlink history |
-| `/admin/content` | Marketing-content editor |
+| `/admin/lora-alerts` | Simulated LoRa Downlink history |
+| `/admin/content` | Public content editor |
 
-## Development setup
+## Architecture
 
-Create `.env.development` from `.env.example`:
+The frontend uses Next.js App Router and feature-oriented vertical slices:
+
+```text
+src/
+├── app/       routes, layouts, and rendering boundaries
+├── features/  auth, registration, simulator, marketing, and admin
+├── shared/    API clients, validation helpers, and shared UI
+└── proxy.ts   protected admin navigation and SSR session refresh
+```
+
+- Server Components load home/admin data and forward cookies.
+- Client Components handle forms, maps, editors, simulator interaction, and toasts.
+- Server API modules use a server-side Axios instance.
+- Browser API modules use a client-side Axios instance.
+- Failed protected browser requests attempt one refresh before redirecting to login.
+- Concurrent SSR refreshes share one in-memory refresh promise per frontend instance.
+
+```text
+Browser
+   |
+   v
+Next.js 16 (Vercel)
+   |
+   v
+Express API (Render)
+   |
+   +--> PostgreSQL
+   +--> MongoDB
+   +--> OpenRouteService
+```
+
+The browser never connects directly to a database.
+
+## Technology
+
+- Next.js 16 App Router and React 19
+- TypeScript and Tailwind CSS 4
+- Axios and Zod
+- Leaflet, React Leaflet, and OpenStreetMap tiles
+- Sonner notifications
+- Vercel deployment
+
+## Authentication flow
+
+1. The admin submits credentials to Express.
+2. Express issues five-minute access and fifteen-day refresh JWTs in HTTP-only cookies.
+3. Browser and server-side requests forward the cookies.
+4. When access expires, the frontend attempts one refresh and retries the request.
+5. Refresh rotation and token versions prevent reuse and support global logout.
+6. `proxy.ts` checks protected admin navigation.
+
+JWTs are not stored in browser local storage.
+
+## Local development
+
+### Requirements
+
+- Node.js 20+ and npm
+- The [PulseMesh backend](https://github.com/kobihanoch/PulseMesh-Backend) on port 5000
+
+### Installation
+
+```powershell
+git clone https://github.com/kobihanoch/PulseMesh-Frontend.git
+cd PulseMesh-Frontend
+npm install
+Copy-Item .env.example .env.development
+npm run dev
+```
+
+Configure `.env.development`:
 
 ```env
 NODE_ENV=development
 NEXT_PUBLIC_SERVER_API_URL=http://localhost:5000
 ```
 
-Start the [backend](../Backend/README.md) first, then:
-
-```powershell
-npm install
-npm run dev
-```
-
 Open `http://localhost:3000`.
 
 ## Commands
 
-```powershell
-npm run dev
-npm run typecheck
-npm run lint
-npm run build
-npm start
-```
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start development mode |
+| `npm run typecheck` | Run TypeScript validation |
+| `npm run lint` | Run ESLint |
+| `npm run build` | Create a production build |
+| `npm start` | Serve the production build |
 
-## Production status
+## Production deployment
 
-Production deployment is pending. The final environment must set `NEXT_PUBLIC_SERVER_API_URL` to the deployed Express HTTPS URL. The backend must allow the deployed frontend origin and issue secure cookies correctly.
+- Website: [pulsemesh.kobihanoch.com](https://pulsemesh.kobihanoch.com)
+- Platform: Vercel with automatic GitHub deployment
+- API: [pulsemesh-api.kobihanoch.com](https://pulsemesh-api.kobihanoch.com)
+- Production environment: `NEXT_PUBLIC_SERVER_API_URL=https://pulsemesh-api.kobihanoch.com`
+
+The backend accepts the deployed frontend origin and issues secure HTTP-only cookies over HTTPS. A Render free-tier cold start may delay the first API-backed page load.
 
 ## Known limitations
 
-- The web application simulates Push, SMS, and LoRa delivery.
-- Physical LoRa, Meshtastic Bluetooth, and offline maps are not implemented.
-- Telemetry history refreshes when the server-rendered device page reloads; it is not streamed live.
-- The application is not connected to MDA or emergency number 101.
+- Push, SMS, and LoRa delivery are simulated.
+- Physical Meshtastic hardware, Bluetooth integration, and offline maps are not implemented.
+- The simulator uses online OpenStreetMap tiles.
+- The platform is not integrated with emergency services.
+- Automated testing and production observability are not implemented.
+- Telemetry history refreshes with the page; it is not streamed live.
+- SSR refresh deduplication is in-memory and applies to one frontend instance.
